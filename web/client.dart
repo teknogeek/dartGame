@@ -5,9 +5,9 @@ import 'dart:async';
 List clients;
 DivElement clientsDiv;
 
-void main()
+void init()
 {
-	for(int i = 1; i <= 3; i++)
+	for(int i = 1; i <= 1; i++)
 	{
 		connect("127.0.0.1", 9223, "ws", i);
 	}

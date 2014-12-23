@@ -6,3 +6,5 @@ environment:
 dependencies:
   browser: '>=0.9.0 <0.10.0'
   route: any
+  game_loop: any
+ 
