@@ -35,7 +35,16 @@ void processMessage(json, WebSocket webSocket)
 	var client = json['client'];
 	String response = "";
 	print("Message from client $client: $message");
-	response = '{"response": "$message received from client $client."}';
+	if(message == "moveTile")
+	{
+		int x = json['movement']['x'];
+		int y = json['movement']['y'];
+		response = '{"response": "moveClient"}';
+	}
+	else
+	{
+		response = '{"response": "$message received from client $client."}';
+	}
 	webSocket.add(response);
 	
 }
