@@ -1,16 +1,19 @@
 import 'sprite.dart';
 
-class Entity{
+class Entity
+{
   Sprite entitySprite;
   int x = 0,y = 0;
   int health = 100;
   bool selected = false;
   
-  Entity(Sprite sprite){
+  Entity(Sprite sprite)
+  {
     entitySprite = sprite;
   }
   
-  Sprite getSprite(){
+  Sprite getSprite()
+  {
     return entitySprite;
   }
 }
