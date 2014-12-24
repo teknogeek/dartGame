@@ -1,7 +1,7 @@
 class Sprite{
 var image;
 
-void Sprite(var newImage){
+Sprite(var newImage){
   image = newImage;
 }
 

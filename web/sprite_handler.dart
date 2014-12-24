@@ -4,7 +4,7 @@ import 'dart:collection';
 class SpriteHandler{
 HashMap<String,Sprite> spriteList;
   
-  void SpriteHandler(){
+  SpriteHandler(){
     spriteList = new HashMap<String,Sprite>();
   }
   
