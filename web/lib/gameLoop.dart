@@ -3,10 +3,12 @@ import 'package:game_loop/game_loop_html.dart';
 import '../starter.dart';
 import 'sprite.dart';
 import 'entity.dart';
+import 'dart:async';
 
 final targetFPS = 60;
 final maxWidth = 1280;
 final maxHeight = 720;
+int xInc = 0, yInc = 0;
 var fpsCorrection = false;
 int frames = 0;
 int gameWidth = maxWidth;
@@ -20,9 +22,7 @@ final CanvasRenderingContext2D context = canvas.context2D;
 
 void loopInit()
 {
-	window.onKeyDown.listen(handleKeyInput);
-	canvas.onMouseDown.listen(handleClickInput);
-	canvas.onMouseMove.listen(handleMouseInput);
+	canvas.onMouseDown.listen(handleMouseInput);
 	gameLoop = new GameLoopHtml(canvas);
 	gameLoop.pointerLock.lockOnClick = false;
 	gameLoop.onUpdate = ((gameLoop) 
@@ -45,18 +45,45 @@ void doGameUpdates()
 	
 }
 
-void handleKeyInput(e)
-{
-	//Handle keyboard input
-}
-
 void handleMouseInput(e)
 {
-	//Mouse moves etc
-}
+	Entity shipEntity;
+	int xOffset = 0, yOffset = 0, mouseX, mouseY;
+	bool isInHitbox = false;
+	for(dynamic entity in entityList)
+	{
+		Sprite entitySprite = (entity as Entity).getSprite(); 
+		if(sprites.getNameForSprite(entitySprite) == "red-airship")
+		{
+			shipEntity = entity;
+			break;
+		}
+	}
 
-void handleClickInput(e){
-  //Mouse clicks  
+	xOffset = shipEntity.x - e.client.x;
+	yOffset = shipEntity.y - e.client.y;
+	if(e.client.x <= shipEntity.x + 32 && e.client.x >= shipEntity.x && e.client.y <= shipEntity.y + 32 && e.client.y >= shipEntity.y)
+	{
+		isInHitbox = true;
+	}
+	
+	StreamSubscription mouseMoveStream = canvas.onMouseMove.listen((onData)
+	{
+		mouseX = onData.client.x;
+		mouseY = onData.client.y;
+		
+		if(isInHitbox)
+		{
+			shipEntity..x = mouseX + xOffset
+    				  ..y = mouseY + yOffset;
+		}
+	});
+
+	canvas.onMouseUp.listen((onData)
+	{
+    	 mouseMoveStream.cancel();
+    	 isInHitbox = false;
+	});
 }
 
 void render()
@@ -106,18 +133,14 @@ Sprite getSpriteFromInt(String i)
 {
 	switch(i)
 	{
-		case("0"):
-		{
+		case "0":
 			return sprites.getSprite("ground");
-		}
-		case("1"):
-		{
+			
+		case "1":
 			return sprites.getSprite("water");
-		}
+			
 		default:
-		{
 			return sprites.getSprite("ground");
-		}
 	}
 }
 

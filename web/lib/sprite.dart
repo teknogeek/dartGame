@@ -4,11 +4,11 @@ class Sprite
 	
 	Sprite(var newImage)
 	{
-	  image = newImage;
+		image = newImage;
 	}
 	
 	dynamic getImage()
 	{
-	  return image;
+		return image;
 	}
 }

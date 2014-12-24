@@ -29,4 +29,20 @@ class SpriteHandler
 			return null;
 		}
 	}
+	
+	String getNameForSprite(Sprite theSprite)
+	{
+		String spriteName = null;
+		for(int i = 0; i < spriteList.length; i++)
+		{
+			String name = spriteList.keys.elementAt(i);
+			Sprite sprite = spriteList.values.elementAt(i);
+			if(theSprite == sprite)
+			{
+				spriteName = name;
+				break;
+			}
+		}
+		return spriteName;
+	}
 }
