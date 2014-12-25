@@ -3,6 +3,7 @@ import 'package:game_loop/game_loop_html.dart';
 import '../starter.dart';
 import 'sprite.dart';
 import 'entity.dart';
+import 'client.dart';
 import 'dart:async';
 
 final targetFPS = 60;
@@ -22,7 +23,6 @@ final CanvasRenderingContext2D context = canvas.context2D;
 
 void loopInit()
 {
-	canvas.onMouseDown.listen(handleMouseInput);
 	gameLoop = new GameLoopHtml(canvas);
 	gameLoop.pointerLock.lockOnClick = false;
 	gameLoop.onUpdate = ((gameLoop) 
@@ -45,7 +45,7 @@ void doGameUpdates()
 	
 }
 
-void handleMouseInput(e)
+void handleMouseInput(e, WebSocket webSocket, int clientNumber)
 {
 	Entity shipEntity;
 	int xOffset = 0, yOffset = 0, mouseX, mouseY;
@@ -74,8 +74,19 @@ void handleMouseInput(e)
 		
 		if(isInHitbox)
 		{
-			shipEntity..x = mouseX + xOffset
-    				  ..y = mouseY + yOffset;
+			if((mouseX - shipEntity.x).abs() > 32 || (mouseY - shipEntity.y).abs() > 32)
+			{
+				int newX = (mouseX ~/ 32) * 32;
+				int newY = (mouseY ~/ 32) * 32;
+				
+				shipEntity..x = newX
+                   		  ..y = newY;
+				
+				String moveData = '{"message": "moveClient", "client": "$clientNumber", "x": "${shipEntity.x}", "y": "${shipEntity.y}"}'; 
+				sendWs(moveData, webSocket, clientNumber, false);
+			}
+			//shipEntity..x = mouseX + xOffset
+    		//		  ..y = mouseY + yOffset;
 		}
 	});
 

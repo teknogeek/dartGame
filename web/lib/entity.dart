@@ -1,4 +1,5 @@
 import 'sprite.dart';
+List<dynamic> entityList;
 
 class Entity
 {

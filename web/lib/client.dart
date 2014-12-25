@@ -1,6 +1,10 @@
 import 'dart:html';
 import 'dart:convert';
 import 'dart:async';
+import '../starter.dart';
+import 'gameLoop.dart';
+import 'entity.dart';
+import 'sprite.dart';
 
 List clients;
 DivElement clientsDiv;
@@ -56,9 +60,17 @@ void onDisconnected(int clientNumber)
 
 void onMessage(data)
 {
-	var json = JSON.decode(data);
-	var echoFromServer = json['response'];
-	print("Recieved message from server: $echoFromServer");
+	var responseFromServer = JSON.decode(data);
+	if(responseFromServer['type'] == "map")
+	{
+		List<List> serverMap = responseFromServer['response'];
+		lvlMap.map = serverMap;
+	}
+	else
+	{
+		var echoFromServer = JSON.decode(data);
+		print("Recieved message from server: ${echoFromServer['response']}");
+	}
 }
 
 void updateButton(Event e)
@@ -71,9 +83,17 @@ void updateButton(Event e)
 	sendButton.disabled = boxData.isEmpty;
 }
 
-void sendWs(String message, WebSocket webSocket, int clientNumber)
+void sendWs(String message, WebSocket webSocket, int clientNumber, [bool isStandard = true])
 {
-	var request = '{"message": "$message", "client": "$clientNumber"}';
+	var request;
+	if(isStandard)
+	{
+		request = '{"message": "$message", "client": "$clientNumber"}';
+	}
+	else
+	{
+		request = message;
+	}
 	print("Send message to server: $request");
 	webSocket.send(request);
 }
@@ -87,6 +107,9 @@ void sendData(Event e, WebSocket webSocket, int clientNumber)
 
 void addNewClient(int clientNumber, WebSocket webSocket)
 {
+	sendWs("addCLient", webSocket, clientNumber);
+	entityList.add(new Entity(sprites.getSprite("red-airship")));
+	
 	//client div
 	DivElement clientDiv = new DivElement();
 	clientDiv.id = "client$clientNumber";
@@ -113,4 +136,6 @@ void addNewClient(int clientNumber, WebSocket webSocket)
 	
 	InputElement inputBox = querySelector("#client$clientNumber").querySelector("#inputBox");
 	inputBox.onInput.listen(updateButton);
+	
+	canvas.onMouseDown.listen((event) => handleMouseInput(event, webSocket, clientNumber));
 }

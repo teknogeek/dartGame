@@ -1,3 +1,6 @@
+import 'sprite_handler.dart';
+SpriteHandler sprites;
+
 class Sprite
 {
 	var image;
